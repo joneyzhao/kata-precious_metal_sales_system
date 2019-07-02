@@ -20,7 +20,7 @@ export default class OrderApp {
     
     // 获取产品信息
     let orderItems = orderCommandObj.items;
-    OrderData.totalPrice = this.getOriginalTotalPrice(orderItems).toFixed(2);
+    OrderData.totalPrice = this.getOriginalTotalPrice(orderItems);
 
     // 获取产品优惠信息
     let productDiscounts = this.getProductDiscounts(orderItems);
@@ -33,10 +33,10 @@ export default class OrderApp {
     OrderData.memberPointsIncreased = point;
     let newNemberPoints = Math.ceil(OrderData.memberPoints) + Math.ceil(point);
     OrderData.memberPoints = newNemberPoints;
-    OrderData.newMemberType = this.getNewMemberType(OrderData);
+    OrderData.newMemberType = this.getNewMemberType(OrderData.memberPoints);
     console.log('===HYZ==OrderData==' + JSON.stringify(OrderData));
-    return OrderData.memberPointsIncreased;
     // return (new OrderRepresentation(OrderData)).toString();
+    return OrderData.newMemberType
   }
 
   getOriginalTotalPrice(orderItems) {
@@ -65,9 +65,6 @@ export default class OrderApp {
       let discount = 0;
       let prodTotalPrice = productItme.price * orderItems[i].amount;
       let discountActive = productItme.discountActive || 0;
-      console.log('===HYZ==产品代码=' + productItme.productNo);
-      console.log('===HYZ==总价=' + prodTotalPrice);
-      console.log('===HYZ==优惠活动=' + discountActive);
       if ('每满3000元减350, 每满2000减30，每满1000减10' === discountActive ) {
         if (prodTotalPrice >= 3000) {
              discount = 350;
@@ -94,10 +91,14 @@ export default class OrderApp {
       let discountCard = 0;
       let discountCards = productItme.discountCards;
       if ('9折券' === discountCards) {
-        discountCardList.push(discountCards);
+        if (discountCardList.indexOf(discountCards) < 0) {
+          discountCardList.push(discountCards);
+        }
         discountCard = Math.ceil(prodTotalPrice * (1-0.9));
       } else if ('===HYZ==95折券' === discountCards) {
-        discountCardList.push(discountCards);
+        if (discountCardList.indexOf(discountCards) < 0) {
+          discountCardList.push(discountCards);
+        }
         discountCard = Math.ceil(prodTotalPrice * (1-0.95));
       }
 
@@ -140,7 +141,17 @@ export default class OrderApp {
     return pointIncrease;
   }
 
-  getNewMemberType() {
-    return '金卡';
+  getNewMemberType(memberPoints) {
+    let cardStyle = '普卡';
+    if (memberPoints < 10000) {
+      cardStyle = '普卡';
+    } else if (memberPoints < 50000) {
+      cardStyle = '金卡';
+    } else if (memberPoints < 100000) {
+      cardStyle = '白金卡';
+    } else {
+      cardStyle = '钻石卡';
+    }
+    return cardStyle;
   }
 }
