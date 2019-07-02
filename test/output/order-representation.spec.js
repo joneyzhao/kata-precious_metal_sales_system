@@ -4,6 +4,7 @@ import { readFile } from '../../src/output/utils';
 import OrderItem from '../../src/output/order-item';
 import DiscountItem from '../../src/output/discount-item';
 import OrderRepresentation from '../../src/output/order-representation';
+import { writeFileSync } from 'fs';
 
 
 describe('OrderRepresentation', () => {
@@ -46,6 +47,6 @@ describe('OrderRepresentation', () => {
     };
     const orderRepresentation = new OrderRepresentation(data);
     const expectedResult = await readFile(path.join(__dirname, '../resources/sample_result.txt'), 'utf8');
-    assert.equal(orderRepresentation.toString(), expectedResult.trim());
+    assert.equal(orderRepresentation.toString().replace(/\r\n/gi, '\n'), expectedResult.trim().replace(/\r\n/gi, '\n'));
   });
 });
