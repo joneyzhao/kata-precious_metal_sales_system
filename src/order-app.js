@@ -29,8 +29,13 @@ export default class OrderApp {
     OrderData.orderItems = productDiscounts.orderItemsList;
     OrderData.discountCards = productDiscounts.discountCardList;
     OrderData.receivables = OrderData.totalPrice - productDiscounts.totalDiscountPrice;
+    let point = this.getPoints(OrderData);
+    OrderData.memberPointsIncreased = point;
+    let newNemberPoints = Math.ceil(OrderData.memberPoints) + Math.ceil(point);
+    OrderData.memberPoints = newNemberPoints;
+    OrderData.newMemberType = this.getNewMemberType(OrderData);
     console.log('===HYZ==OrderData==' + JSON.stringify(OrderData));
-    return OrderData.totalDiscountPrice;
+    return OrderData.memberPointsIncreased;
     // return (new OrderRepresentation(OrderData)).toString();
   }
 
@@ -119,10 +124,23 @@ export default class OrderApp {
     return productDiscounts;
   }
 
-  getActiveDiscountTotalPrice() {
+  getPoints(OrderData) {
+    let pointIncrease = 0;
+    let memberPoints = OrderData.memberPoints;
+    let receivables = OrderData.receivables;
+    if (memberPoints < 10000) {
+      pointIncrease = receivables;
+    } else if (memberPoints >= 10000 && memberPoints < 50000) {
+      pointIncrease = receivables * 1.5;
+    } else if (memberPoints >= 50000 && memberPoints < 100000) {
+      pointIncrease = receivables * 1.8;
+    }else if (memberPoints >= 100000) {
+      pointIncrease = receivables * 2;
+    }
+    return pointIncrease;
+  }
 
-  } 
-  getDiscountCardsTotalPrice() {
-
+  getNewMemberType() {
+    return '金卡';
   }
 }

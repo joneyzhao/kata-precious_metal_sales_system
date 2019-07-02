@@ -23,10 +23,20 @@ describe('OrderApp', () => {
     //   const totalPrice = (new OrderApp()).checkout(inputStr); // 总金额
     //   assert.equal(totalPrice, 10624.00);
     // });
-    it('优惠总金额', async () => {
+    // it('优惠总金额', async () => {
+    //   const inputStr = await readFile(param.inputFile, 'utf8');
+    //   const totalDiscountPrice = (new OrderApp()).checkout(inputStr); // 总金额
+    //   assert.equal(totalDiscountPrice, 764.00);
+    // });
+    it('积分增加', async () => {
       const inputStr = await readFile(param.inputFile, 'utf8');
-      const totalDiscountPrice = (new OrderApp()).checkout(inputStr); // 总金额
-      assert.equal(totalDiscountPrice, 764.00);
+      const memberPointsIncreased = (new OrderApp()).checkout(inputStr); // 总金额
+      assert.equal(memberPointsIncreased, 9860);
     });
+    // it('购买后积分', async () => {
+    //   const inputStr = await readFile(param.inputFile, 'utf8');
+    //   const memberPoints = (new OrderApp()).checkout(inputStr); // 总金额
+    //   assert.equal(memberPoints, 19720);
+    // });
   });
 });
