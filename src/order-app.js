@@ -2,6 +2,8 @@
 import OrderRepresentation from './output/order-representation';
 import UserItems from './output/user-items';
 import ProductItmes from './output/product-items';
+import DiscountItem from './output/discount-item';
+import OrderItem from './output/order-item';
 
 export default class OrderApp {
   
@@ -34,9 +36,7 @@ export default class OrderApp {
     let newNemberPoints = Math.ceil(OrderData.memberPoints) + Math.ceil(point);
     OrderData.memberPoints = newNemberPoints;
     OrderData.newMemberType = this.getNewMemberType(OrderData.memberPoints);
-    console.log('===HYZ==OrderData==' + JSON.stringify(OrderData));
-    // return (new OrderRepresentation(OrderData)).toString();
-    return OrderData.newMemberType
+    return new OrderRepresentation(OrderData);
   }
 
   getOriginalTotalPrice(orderItems) {
@@ -87,7 +87,6 @@ export default class OrderApp {
         }
       }
 
-      console.log('===HYZ===优惠金额==' + discount);
       let discountCard = 0;
       let discountCards = productItme.discountCards;
       if ('9折券' === discountCards) {
@@ -95,27 +94,30 @@ export default class OrderApp {
           discountCardList.push(discountCards);
         }
         discountCard = Math.ceil(prodTotalPrice * (1-0.9));
-      } else if ('===HYZ==95折券' === discountCards) {
+      } else if ('95折券' === discountCards) {
         if (discountCardList.indexOf(discountCards) < 0) {
           discountCardList.push(discountCards);
         }
         discountCard = Math.ceil(prodTotalPrice * (1-0.95));
       }
 
-      console.log('===HYZ=折=' + discountCard);
       let discountCost = discountCard > discount ? discountCard : discount;
       totalDiscountPrice+= discountCost;
-      discountItem.totalDiscountPrice = discountCost;
+      discountItem.discount = -discountCost;
       discountItem.productNo = productItme.productNo;
       discountItem.productName = productItme.productName;
-      discounts.push(discountItem);
+      
+      if (discountCost !== 0) {
+        discounts.push(new DiscountItem(discountItem));
+      }
 
       orderItem.productNo = productItme.productNo;
       orderItem.productName = productItme.productName;
-      orderItem.price = productItme.price;
+      orderItem.price = Number(productItme.price);
       orderItem.amount = orderItems[i].amount;
       orderItem.subTotal = prodTotalPrice;
-      orderItemsList.push(orderItem);
+
+      orderItemsList.push(new OrderItem(orderItem));
 
     }
     productDiscounts.totalDiscountPrice = totalDiscountPrice; // 总优惠金额
